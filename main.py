@@ -1,6 +1,6 @@
 import pyrogram
 from pyrogram import Client, filters
-from pyrogram.errors import UserAlreadyParticipant, InviteHashExpired, UsernameNotOccupied, MessageEmpty
+from pyrogram.errors import UserAlreadyParticipant, InviteHashExpired, UsernameNotOccupied
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import time
@@ -48,14 +48,11 @@ def downstatus(statusfile, message):
             speed = data["speed"]
             eta = data["eta"]
             bar = data["bar"]
-            try:
-                bot.edit_message_text(
-                    message.chat.id,
-                    message.id,
-                    f"__Downloading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
-                )
-            except MessageEmpty:
-                pass
+            bot.edit_message_text(
+                message.chat.id,
+                message.id,
+                f"__Downloading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
+            )
             time.sleep(5)
         except:
             time.sleep(5)
@@ -75,14 +72,11 @@ def upstatus(statusfile, message):
             speed = data["speed"]
             eta = data["eta"]
             bar = data["bar"]
-            try:
-                bot.edit_message_text(
-                    message.chat.id,
-                    message.id,
-                    f"__Uploading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
-                )
-            except MessageEmpty:
-                pass
+            bot.edit_message_text(
+                message.chat.id,
+                message.id,
+                f"__Uploading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
+            )
             time.sleep(5)
         except:
             time.sleep(5)
@@ -302,8 +296,10 @@ def get_message_type(msg: pyrogram.types.messages_and_media.message.Message):
         return "Text"
     except:
         pass
+        
+USAGE = """**BOT MADE BY KUNAL WITH ❤️**
+"""
 
-USAGE = """**BOT MADE BY KUNAL WITH ❤️**"""
 
 # infinty polling
 bot.run()
