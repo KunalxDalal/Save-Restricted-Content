@@ -22,6 +22,17 @@ if ss is not None:
 else:
     acc = None
 
+# Helper function to format time
+def format_time(seconds):
+    if seconds < 60:
+        return f"{seconds:.2f} seconds"
+    elif seconds < 3600:
+        minutes = seconds / 60
+        return f"{minutes:.2f} minutes"
+    else:
+        hours = seconds / 3600
+        return f"{hours:.2f} hours"
+
 # download status
 def downstatus(statusfile, message):
     while True:
@@ -37,7 +48,11 @@ def downstatus(statusfile, message):
             speed = data["speed"]
             eta = data["eta"]
             bar = data["bar"]
-            bot.edit_message_text(message.chat.id, message.id, f"__Downloading__:\n**{bar} {percentage:.1f}%**\n**Speed**: {speed} KB/s\n**ETA**: {eta} seconds")
+            bot.edit_message_text(
+                message.chat.id,
+                message.id,
+                f"__Downloading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
+            )
             time.sleep(5)
         except:
             time.sleep(5)
@@ -57,7 +72,11 @@ def upstatus(statusfile, message):
             speed = data["speed"]
             eta = data["eta"]
             bar = data["bar"]
-            bot.edit_message_text(message.chat.id, message.id, f"__Uploading__:\n**{bar} {percentage:.1f}%**\n**Speed**: {speed} KB/s\n**ETA**: {eta} seconds")
+            bot.edit_message_text(
+                message.chat.id,
+                message.id,
+                f"__Uploading__:\n**{bar} {percentage:.2f}%**\n**Speed**: {speed:.2f} MB/s\n**ETA**: {eta}"
+            )
             time.sleep(5)
         except:
             time.sleep(5)
@@ -65,8 +84,8 @@ def upstatus(statusfile, message):
 # progress writer
 def progress(current, total, message, type):
     percentage = current * 100 / total
-    speed = current / (time.time() - start_time) / 1024
-    eta = (total - current) / (current / (time.time() - start_time))
+    speed = (current / (time.time() - start_time)) / (1024 * 1024)
+    eta = format_time((total - current) / (current / (time.time() - start_time)))
     bar = tqdm(total=total, ncols=80, unit='B', unit_scale=True, desc=f'{type.capitalize()} progress')
     bar.update(current - bar.n)
     bar_str = bar.format_meter(current, total, time.time() - start_time)
@@ -208,7 +227,7 @@ def handle_private(message: pyrogram.types.messages_and_media.message.Message, c
         bot.send_sticker(message.chat.id, file, reply_to_message_id=message.id)
 
     elif "Voice" == msg_type:
-        bot.send_voice(message.chat.id, file, caption=msg.caption, thumb=thumb, caption_entities=msg.caption_entities, reply_to_message_id=message.id, progress=progress, progress_args=[message, "up"])
+        bot.send_voice(message.chat.id, file, caption=msg.caption, caption_entities=msg.caption_entities, reply_to_message_id=message.id, progress=progress, progress_args=[message, "up"])
 
     elif "Audio" == msg_type:
         try:
@@ -278,34 +297,8 @@ def get_message_type(msg: pyrogram.types.messages_and_media.message.Message):
     except:
         pass
         
-USAGE = """**FOR PUBLIC CHATS**
-
-**__just send post/s link__**
-
-**FOR PRIVATE CHATS**
-
-**__first send invite link of the chat (unnecessary if the account of string session already member of the chat)
-then send post/s link__**
-
-**FOR BOT CHATS**
-
-**__send link with** '/b/', **bot's username and message id, you might want to install some unofficial client to get the id like below__**
-
-```
-https://t.me/b/botusername/4321
-```
-
-**MULTI POSTS**
-
-**__send public/private posts link as explained above with formate "from - to" to send multiple messages like below__**
-
-```
-https://t.me/xxxx/1001-1010
-
-https://t.me/c/xxxx/101 - 120
-```
-
-**__note that space in between doesn't matter__**
+USAGE = """**BOT MADE BY KUNAL WITH ❤️**
+Just Send me Link to Clone
 """
 
 
