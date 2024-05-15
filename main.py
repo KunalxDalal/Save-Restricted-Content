@@ -300,6 +300,5 @@ def get_message_type(msg: pyrogram.types.messages_and_media.message.Message):
 USAGE = """**BOT MADE BY KUNAL WITH ❤️**
 """
 
-
 # infinty polling
 bot.run()
