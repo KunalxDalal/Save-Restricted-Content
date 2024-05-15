@@ -8,6 +8,7 @@ import os
 import threading
 import json
 from os import environ
+from tqdm import tqdm
 
 bot_token = environ.get("TOKEN", "") 
 api_hash = environ.get("HASH", "") 
@@ -30,10 +31,14 @@ def downstatus(statusfile, message):
     time.sleep(3)
     while os.path.exists(statusfile):
         with open(statusfile, "r") as downread:
-            txt = downread.read()
+            data = json.load(downread)
         try:
-            bot.edit_message_text(message.chat.id, message.id, f"__Downloading__: **{txt}**%")
-            time.sleep(10)
+            percentage = data["percentage"]
+            speed = data["speed"]
+            eta = data["eta"]
+            bar = data["bar"]
+            bot.edit_message_text(message.chat.id, message.id, f"__Downloading__:\n**{bar} {percentage:.1f}%**\n**Speed**: {speed} KB/s\n**ETA**: {eta} seconds")
+            time.sleep(5)
         except:
             time.sleep(5)
 
@@ -46,23 +51,33 @@ def upstatus(statusfile, message):
     time.sleep(3)
     while os.path.exists(statusfile):
         with open(statusfile, "r") as upread:
-            txt = upread.read()
+            data = json.load(upread)
         try:
-            bot.edit_message_text(message.chat.id, message.id, f"__Uploaded__: **{txt}**%")
-            time.sleep(10)
+            percentage = data["percentage"]
+            speed = data["speed"]
+            eta = data["eta"]
+            bar = data["bar"]
+            bot.edit_message_text(message.chat.id, message.id, f"__Uploading__:\n**{bar} {percentage:.1f}%**\n**Speed**: {speed} KB/s\n**ETA**: {eta} seconds")
+            time.sleep(5)
         except:
             time.sleep(5)
 
 # progress writer
 def progress(current, total, message, type):
+    percentage = current * 100 / total
+    speed = current / (time.time() - start_time) / 1024
+    eta = (total - current) / (current / (time.time() - start_time))
+    bar = tqdm(total=total, ncols=80, unit='B', unit_scale=True, desc=f'{type.capitalize()} progress')
+    bar.update(current - bar.n)
+    bar_str = bar.format_meter(current, total, time.time() - start_time)
     with open(f'{message.id}{type}status.txt', "w") as fileup:
-        fileup.write(f"{current * 100 / total:.1f}")
+        json.dump({"percentage": percentage, "speed": speed, "eta": eta, "bar": bar_str}, fileup)
 
 # start command
 @bot.on_message(filters.command(["start"]))
 def send_start(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
     bot.send_message(message.chat.id, f"**👋 Hi {message.from_user.mention}, I am Save Restricted Bot!**\n\n**I can send you restricted content by its post link.**\n\n{USAGE}",
-                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🌐 Contact Me", url="https://t.me/ikunaldalal")]]), reply_to_message_id=message.id)
+                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🌐 Contact Me", url="https://t.me/ikunalx")]]), reply_to_message_id=message.id)
 
 @bot.on_message(filters.text)
 def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
@@ -148,6 +163,8 @@ def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 
 # handle private
 def handle_private(message: pyrogram.types.messages_and_media.message.Message, chatid: int, msgid: int):
+    global start_time
+    start_time = time.time()
     msg: pyrogram.types.messages_and_media.message.Message = acc.get_messages(chatid, msgid)
     msg_type = get_message_type(msg)
 
@@ -260,8 +277,7 @@ def get_message_type(msg: pyrogram.types.messages_and_media.message.Message):
         return "Text"
     except:
         pass
-
-
+        
 USAGE = """**FOR PUBLIC CHATS**
 
 **__just send post/s link__**
