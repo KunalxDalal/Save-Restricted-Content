@@ -298,7 +298,6 @@ def get_message_type(msg: pyrogram.types.messages_and_media.message.Message):
         pass
         
 USAGE = """**BOT MADE BY KUNAL WITH ❤️**
-Just Send me Link to Clone
 """
 
 
