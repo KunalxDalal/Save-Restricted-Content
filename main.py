@@ -99,7 +99,7 @@ def send_start(client: pyrogram.client.Client, message: pyrogram.types.messages_
         bot.send_message(message.chat.id, f"**👋 Hi {message.from_user.mention}, I am Save Restricted Bot!**\n\n**I can send you restricted content by its post link.**\n\n{USAGE}",
                          reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🌐 Contact Me", url="https://t.me/ikunalx")]]), reply_to_message_id=message.id)
     except MessageEmpty:
-        pass
+        pass  # Ignore the error and continue execution
 
 @bot.on_message(filters.text)
 def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
@@ -176,7 +176,7 @@ def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
                         bot.send_message(message.chat.id, f"**String Session is not Set**", reply_to_message_id=message.id)
                         return
                     try:
-                        handle_private(message, username, msgid)
+                                                handle_private(message, username, msgid)
                     except Exception as e:
                         bot.send_message(message.chat.id, f"**Error** : __{e}__", reply_to_message_id=message.id)
 
@@ -305,3 +305,4 @@ USAGE = """**BOT MADE BY KUNAL WITH ❤️**
 
 # infinty polling
 bot.run()
+
