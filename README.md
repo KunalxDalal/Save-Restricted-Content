@@ -44,10 +44,3 @@ https://t.me/xxxx/1001-1010
 
 https://t.me/c/xxxx/101 - 120
 ```
-
-_note that space in between doesn't matter_
-
-### Credits
-
-- [BipinKrish](https://github.com/bipinkrish)
-- [Tech VJ](https://telegram.dog/Kingvj01)
