@@ -120,8 +120,7 @@ def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
                 return
             bot.send_message(message.chat.id, "**Chat Joined**", reply_to_message_id=message.id)
         except UserAlreadyParticipant:
-            bot.send_message(message.chat.id, "**Chat already Joined**", reply_to_message
-_id=message.id)
+            bot.send_message(message.chat.id, "**Chat already Joined**", reply_to_message_id=message.id)
         except InviteHashExpired:
             bot.send_message(message.chat.id, "**Invalid Link**", reply_to_message_id=message.id)
 
